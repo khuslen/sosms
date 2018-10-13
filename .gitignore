@@ -1,6 +1,9 @@
 client/node_modules
 server/node_modules
+admin/node_modules
 
 client/public/index.js
 client/semantic
+admin/public/index.js
+admin/semantic
 server/addUsersCode.js

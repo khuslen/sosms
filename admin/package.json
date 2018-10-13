@@ -1,0 +1,23 @@
+{
+  "name": "admin",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "lite-server",
+    "build": "browserify index.js -o public/index.js",
+    "build-w": "watchify index.js -o public/index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "semantic-ui": "^2.4.0",
+    "uuid": "^3.3.2"
+  },
+  "devDependencies": {
+    "browserify": "^16.2.3",
+    "lite-server": "^2.4.0",
+    "watchify": "^3.11.0"
+  }
+}
