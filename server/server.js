@@ -4,6 +4,7 @@ const MongoClient = mongo.MongoClient;
 const http = require("http");
 // const fs = require("fs");
 const WebSocketServer = require("ws").Server;
+const moment = require("moment-timezone");
 
 // Twilio
 const accountSid = 'AC38223b55b9e26c080f83b927eb319804';
@@ -13,6 +14,25 @@ const twilioClient = require('twilio')(accountSid, authToken);
 let users = {};
 
 let connectedClient;
+
+let updates = [
+    {
+        "time": "7:51AM 14/10/2018",
+        "text": "Incident occurred."
+    },
+    {
+        "time": "7:53AM 14/10/2018",
+        "text": "Evacuation commenced."
+    },
+    {
+        "time": "7:53AM 14/10/2018",
+        "text": "Emergency services have been contacted."
+    },
+    {
+        "time": "8:03AM 14/10/2018",
+        "text": "Emergency services have arrived."
+    }
+];
 
 MongoClient.connect("mongodb://localhost:27017", { useNewUrlParser: true }, function (err, client) {
     if (err) throw err;
@@ -83,27 +103,11 @@ wss.on("connection", function connection(ws) {
     }
 });
 
-function getUpdates(ws, updates) {
+function getUpdates(ws, msg) {
     const data = {
-        "updates": [
-            {
-                "time": "7:51AM 14/10/2018",
-                "text": "Incident occurred."
-            },
-            {
-                "time": "7:53AM 14/10/2018",
-                "text": "Evacuation commenced."
-            },
-            {
-                "time": "7:53AM 14/10/2018",
-                "text": "Emergency services have been contacted."
-            },
-            {
-                "time": "8:03AM 14/10/2018",
-                "text": "Emergency services have arrived."
-            }
-        ]
+        updates: updates
     };
+    console.log(updates);
     reply(ws, "getUpdates", data);
 }
 
@@ -117,11 +121,12 @@ function reply(ws, res, data) {
 }
 
 function login(ws, msg) {
-    if (!msg.data.hasOwnProperty("userId")) {
-        reply(ws, "login", "Please provide user ID!");
-    } else {
+    if (msg.data.hasOwnProperty("userId")) {
         ws.userId = msg.data.userId;
         reply(ws, "login", "Successful login!");
+        if (msg.data.userId !== "admin") {
+            connectedClient = ws;
+        }
     }
 }
 
@@ -203,5 +208,20 @@ function sendSms(ws, msg) {
 
 function sendUpdate(ws, msg) {
     const updateInfo = msg.data.update;
-    reply(connectedClient, "newUpdate", updateInfo);
+    const time = new Date(Date.now());
+    const myTimezone = "Australia/Brisbane";
+    const myDatetimeFormat= "h:mmA DD/MM/YYYY";
+    const myDatetimeString = moment(time).tz(myTimezone).format(myDatetimeFormat);
+
+    const newUpdate = {
+      time: myDatetimeString,
+      text: updateInfo
+    };
+    updates.push(newUpdate);
+
+    const updateMsg = {
+      updates: updates
+    };
+    reply(connectedClient, "newUpdate", updateMsg);
+    reply(ws, "newUpdate", updateMsg);
 }
