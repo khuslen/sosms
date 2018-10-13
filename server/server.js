@@ -101,7 +101,7 @@ function reply(ws, res, data) {
 }
 
 function login(ws, msg) {
-    if (msg.data.hasOwnProperty("userId")) {
+    if (!msg.data.hasOwnProperty("userId")) {
         reply(ws, "error", "Please provide user ID!");
     } else {
         ws.userId = msg.data.userId;
@@ -116,10 +116,17 @@ function getUserInfo(ws, msg) {
 function safetyBtn(ws, msg) {
     if (msg.data.safe !== "Y" && msg.data.safe !== "N") {
         reply(ws, "error", "Please send a valid safety response!");
-    } else if (msg.reply === "Y") {
-
-    } else if (msg.reply === "N") {
-
+    } else if (msg.data.safe === "Y") {
+        reply(ws, "safetyBtn", {
+            info: `Thank you for marking yourself as safe. Please
+                  continue to follow the instructions of your local
+                  Fire Warden.`
+        });
+    } else if (msg.data.safe === "N") {
+        reply(ws, "safetyBtn", {
+            info: `Please continue to follow the instructions of
+                  your local Fire Warden.`
+        });
     }
 }
 
@@ -127,8 +134,34 @@ function locationBtn(ws, msg) {
     if (msg.data.location !== "W" && msg.data.location !== "H") {
         reply(ws, "error", "Please send a valid location response!");
     } else if (msg.data.location === "W") {
-
+        reply(ws, "locationBtn", {
+            info: `Please follow the instructions of your local
+                  Fire Warden. Continue to monitor updates via SMS and through
+                  the online Emergency Updates page. Thank you.`,
+            fireWardens: [
+                {
+                    name: "Joshua Bennett",
+                    location: "Level 1"
+                },
+                {
+                    name: "Suzanne Smythe",
+                    location: "Level 2"
+                },
+                {
+                    name: "John Ramsey",
+                    location: "Level 3"
+                },
+                {
+                    name: "Aiden Sampson",
+                    location: "Level 4"
+                },
+            ]
+        });
     } else if (msg.data.location === "H") {
-
+        reply(ws, "locationBtn", {
+            info: `Please do not come into work today. Further 
+                  updates will be given via SMS and on the online Emergency 
+                  Updates page. Thank you.`,
+        });
     }
 }
