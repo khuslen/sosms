@@ -5,7 +5,14 @@ const http = require("http");
 // const fs = require("fs");
 const WebSocketServer = require("ws").Server;
 
+// Twilio
+const accountSid = 'AC38223b55b9e26c080f83b927eb319804';
+const authToken = '1538f540ab6ef424b4ac1a18e353ebd5';
+const twilioClient = require('twilio')(accountSid, authToken);
+
 let users = {};
+
+let connectedClient;
 
 MongoClient.connect("mongodb://localhost:27017", { useNewUrlParser: true }, function (err, client) {
     if (err) throw err;
@@ -49,6 +56,15 @@ wss.on("connection", function connection(ws) {
             case "locationBtn":
                 locationBtn(ws, msg);
                 break;
+            case "sendSms":
+                sendSms(ws, msg);
+                break;
+            case "sendUpdate":
+                sendUpdate(ws, msg);
+                break;
+            case "getUpdates":
+                getUpdates(ws, msg);
+                break;
             default:
                 break;
         }
@@ -67,7 +83,7 @@ wss.on("connection", function connection(ws) {
     }
 });
 
-function sendUpdates(ws, updates) {
+function getUpdates(ws, updates) {
     const data = {
         "updates": [
             {
@@ -88,7 +104,7 @@ function sendUpdates(ws, updates) {
             }
         ]
     };
-    reply(ws, "updates", data);
+    reply(ws, "getUpdates", data);
 }
 
 function reply(ws, res, data) {
@@ -164,4 +180,28 @@ function locationBtn(ws, msg) {
                   Updates page. Thank you.`,
         });
     }
+}
+
+function sendSms(ws, msg) {
+    const destination = msg.data.to;
+    const messageBody = msg.data.body;
+    
+    const twilioNumber = '+61427702894';
+
+    twilioClient.messages
+      .create({
+        body: messageBody,
+        from: twilioNumber,
+        to: destination
+      })
+      .then(message => {
+        console.log(message.sid);
+        reply(ws, "sendSms", "Message successfully sent!");
+      })
+      .done();
+}
+
+function sendUpdate(ws, msg) {
+    const updateInfo = msg.data.update;
+    reply(connectedClient, "newUpdate", updateInfo);
 }
