@@ -54,7 +54,7 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log("No, not at Work");
 
         const msgData = {
-            saflocatione: "H"
+            location: "H"
         };
         const reqId = sendCmd("locationBtn", msgData);
     }
