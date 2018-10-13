@@ -16,17 +16,51 @@
     <title>Emergency Updates</title>
   </head>
   <body>
-    <h1>Emergency Updates</h1>
-    <div class="incidentPanel">
-        <h2 id="incidentPanelTitle">Current incidents</h2>
-        <div class="incidentPanel" id="incidentDetail">
-            There are currently no emergencies or incidents.
-        </div>
-        <div id="safetyResp">
-            Are you safe?
-            <br>
-            <button class="ui positive button" id="yesBtn">Yes</button>
-            <button class="ui button" id="noBtn">No</button>
+    <div class="headerBar"><h1>Emergency Updates</h1></div>
+        <div class="pageContent">
+        <div class="incidentPanel">
+            <h2 id="incidentPanelTitle">Current incidents</h2>
+            <div class="incidentPanel" id="incidentDesc">
+                There are currently no emergencies or incidents.
+            </div>
+            <div class="incidentPanel" id="incidentExtras">
+                <div class="ui horizontal divider">
+                    Let us know if you are safe
+                </div>
+                Are you safe?
+                <br>
+                <button class="ui positive button" id="yesBtn">Yes</button>
+                <button class="ui button" id="noBtn">No</button>
+                <br>
+                <br>
+                Are you at work?
+                <br>
+                <button class="ui positive button" id="workBtn">Yes</button>
+                <button class="ui button" id="homeBtn">No</button>
+                <div class="incidentPanel" id="updates">
+                    <div class="ui horizontal divider">
+                        Lastest Updates
+                    </div>
+                    <div class="ui fluid vertical mini steps" id="updates">
+                        <div class="step">
+                            <div class="title"><i class="info circle icon"></i> 8:05AM 14/10/2018</div>
+                            <div class="description">Emergency services have arrived.</div>
+                        </div>
+                        <div class="step">
+                            <div class="title"><i class="info circle icon"></i> 7:53AM 14/10/2018</div>
+                            <div class="description">Emergency services have been contacted</div>
+                        </div>
+                        <div class="step">
+                            <div class="title"><i class="info circle icon"></i> 7:53AM 14/10/2018</div>
+                            <div class="description">Evacuation commenced.</div>
+                        </div>
+                        <div class="step">
+                            <div class="title"><i class="info circle icon"></i> 7:51AM 14/10/2018</div>
+                            <div class="description">Incident occurred.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
   </body>

@@ -67,23 +67,24 @@ function connectToWebSocketServer() {
 function updateIncidentPanel(msgData) {
     document.getElementById("incidentPanelTitle").innerHTML = "Current Incidents at " + msgData.address;
     if (msgData.incident) {
-        document.getElementById("incidentDetail").innerHTML = "\
-            <h2>" + msgData.name + "</h2>\
+        document.getElementById("incidentDesc").innerHTML = "\
+            <h3>" + msgData.name.toUpperCase() + "</h3>\
+            <div class=\"ui clearing divider\"></div>\
             <p>" + msgData.desc + "</p>\
         ";
         
         const panels = document.getElementsByClassName("incidentPanel");
-        for (let i = 0; i < panels.length; i++) {
-            if (msgData.severity === "S1") {
-                panels[i].style.backgroundColor = "rgb(250, 215, 215)";
-            } else if (msgData.severity === "S2") {
-                panels[i].style.backgroundColor = "rgb(250, 235, 215)";
-            } else {
-                panels[i].style.backgroundColor = "rgb(250, 248, 215)";
-            }
-        }
+        // for (let i = 0; i < panels.length; i++) {
+        //     if (msgData.severity === "S1") {
+        //         panels[i].style.backgroundColor = "rgb(250, 215, 215)";
+        //     } else if (msgData.severity === "S2") {
+        //         panels[i].style.backgroundColor = "rgb(250, 235, 215)";
+        //     } else {
+        //         panels[i].style.backgroundColor = "rgb(250, 248, 215)";
+        //     }
+        // }
     }
-    document.getElementById("safetyResp").style.display = "block";
+    document.getElementById("incidentExtras").style.display = "block";
 }
 
 function getUserId() {
