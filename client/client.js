@@ -1,21 +1,41 @@
 const mediasoupClient = require("mediasoup-client");
 const uuidGenerator = require("uuid");
 
-let btnLogin;
 let userId;
+let incident = {
+    name: "Fire on Level 14",
+    address: "1 Office Street",
+    sev: 1,
+    type: "Fire",
+    desc: "some words about the incident"
+};
 
 document.addEventListener("DOMContentLoaded", function() { 
+
+    connectToWebSocketServer();
    // Getting webpage elements
     divRoomSelection = document.getElementById("roomSelection");
 
-    inputRoom = document.getElementById("room");
-    inputName = document.getElementById("name");
+    yesBtn = document.getElementById("yesBtn");
+    noBtn = document.getElementById("noBtn");
 
-    btnLogin = document.getElementById("loginBtn");
-    // Registering a click event for the login button
-    btnLogin.onclick = function() {
-        console.log("Login button triggered");
-        connectToWebSocketServer();
+    // Registering click events for buttons
+    yesBtn.onclick = function() {
+        console.log("Yes button clicked");
+
+        const msgData = {
+            data: "Y"
+        };
+        const reqId = sendCmd("safetyBtn", msgData);
+    }
+
+    noBtn.onclick = function() {
+        console.log("No button clicked");
+
+        const msgData = {
+            data: "N"
+        };
+        const reqId = sendCmd("safetyBtn", msgData);
     }
 }, false);
 
@@ -26,7 +46,8 @@ function connectToWebSocketServer() {
         console.log("Connected!");
 
         // Sending message to server
-        // TODO: Read userId from URL
+        userId = getUserId();
+
         const data = {
             userId: userId
         };
@@ -35,8 +56,45 @@ function connectToWebSocketServer() {
         ws.onmessage = function(message) {
             const msg = JSON.parse(message.data);
             console.log("Received from server:", msg);
+
+            if (msg.res == "incident") {
+                updateIncidentPanel(msg.data);
+            }
         };
     };
+}
+
+function updateIncidentPanel(msgData) {
+    document.getElementById("incidentPanelTitle").innerHTML = "Current Incidents at " + msgData.address;
+    if (msgData.incident) {
+        document.getElementById("incidentDetail").innerHTML = "\
+            <h2>" + msgData.name + "</h2>\
+            <p>" + msgData.desc + "</p>\
+        ";
+        
+        const panels = document.getElementsByClassName("incidentPanel");
+        for (let i = 0; i < panels.length; i++) {
+            if (msgData.severity === "S1") {
+                panels[i].style.backgroundColor = "rgb(250, 215, 215)";
+            } else if (msgData.severity === "S2") {
+                panels[i].style.backgroundColor = "rgb(250, 235, 215)";
+            } else {
+                panels[i].style.backgroundColor = "rgb(250, 248, 215)";
+            }
+        }
+    }
+    document.getElementById("safetyResp").style.display = "block";
+}
+
+function getUserId() {
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    for (var i = 0; i < sURLVariables.length; i++)  {
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] === "userId") {
+            return sParameterName[1];
+        }
+    }
 }
 
 function sendCmd(req, data) {

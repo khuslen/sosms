@@ -18,6 +18,7 @@
   },
   "dependencies": {
     "mediasoup-client": "^2.1.6",
+    "semantic-ui": "^2.4.0",
     "uuid": "^3.3.2"
   }
 }

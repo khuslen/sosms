@@ -2,5 +2,5 @@ client/node_modules
 server/node_modules
 
 client/public/index.js
-
+client/semantic
 server/addUsersCode.js

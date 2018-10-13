@@ -2,25 +2,32 @@
 <html>
   <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <link rel='stylesheet' href='/public/styles.css'>
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" />
+    <link rel="stylesheet" href="/public/styles.css">
     <script src="/public/index.js"></script>
 
-    <title>Conference</title>
+    <link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
+    <script
+        src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous"></script>
+    <script src="semantic/dist/semantic.min.js"></script>
+
+    <title>Emergency Updates</title>
   </head>
   <body>
-    <h1>Conference</h1>
-    <!--login screen-->
-    <div id="roomSelection" style="display: block">
-        <label>Type user name:</label>
-        <input id="name" type="text" value="user1"/>
-        <br>
-        <label>Type room name:</label>
-        <input id="room" type="text" value="room"/>
-        <br>
-        <button id="loginBtn">Enter</button>
+    <h1>Emergency Updates</h1>
+    <div class="incidentPanel">
+        <h2 id="incidentPanelTitle">Current incidents</h2>
+        <div class="incidentPanel" id="incidentDetail">
+            There are currently no emergencies or incidents.
+        </div>
+        <div id="safetyResp">
+            Are you safe?
+            <br>
+            <button class="ui positive button" id="yesBtn">Yes</button>
+            <button class="ui button" id="noBtn">No</button>
+        </div>
     </div>
   </body>
 </html>

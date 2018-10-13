@@ -1,23 +1,31 @@
-h1, h2 {
+body {
     font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif
 }
 
-.clientVideoContainer {
-    width: 200px
+html {
+    margin: 10px;
 }
 
-.clientVideoContainer video {
+.incidentPanel {
     width: 100%;
-    height: 200px;
-    object-fit: contain;
+    background-color: rgb(236, 236, 236);
+    padding: 5px;
+    padding-top: 15px;
+    padding-bottom: 15px;
 }
 
-.peerVideoContainer {
-    width: 200px;
+#safetyResp {
+    padding: 5px;
+    display: none;
 }
 
-.peerVideoContainer video {
-    width: 100%;
-    height: 200px;
-    object-fit: contain;
+@media only screen
+and (min-device-width: 320px) 
+and (max-device-width: 480px) {
+    
+}
+
+@media only screen
+and (min-device-width: 500px) {
+    
 }

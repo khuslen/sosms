@@ -7,7 +7,7 @@ const WebSocketServer = require("ws").Server;
 
 let users = {};
 
-MongoClient.connect("mongodb://localhost:27017", { useNewUrlParser: true }, async function (err, client) {
+MongoClient.connect("mongodb://localhost:27017", { useNewUrlParser: true }, function (err, client) {
   if (err) throw err;
 
   const db = client.db("userList");
@@ -51,7 +51,17 @@ wss.on("connection", function connection(ws) {
     }
   });
   try {
-    ws.send(JSON.stringify({"res": "Connected to server"}));
+    // ws.send(JSON.stringify({"res": "Connected to server"}));
+    ws.send(JSON.stringify({
+        "res": "incident",
+        "data": {
+            "address": "1 Office Street",
+            "name": "Fire on Level 14",
+            "desc": "An electrical fire has broken out in the Level 4 Server Room.",
+            "severity": "S2",
+            "incident": "true"
+        }
+    }));
   } catch (err) {
     console.log(err);
   }
