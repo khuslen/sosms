@@ -17,7 +17,7 @@ body {
     padding-bottom: 15px;
 }
 
-#incidentExtras {
+#incidentSafety, #updatePanel {
     padding: 5px;
     display: none;
     text-align: center;

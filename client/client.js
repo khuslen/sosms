@@ -98,10 +98,13 @@ function updateIncidentPanel(msgData) {
         
         const panels = document.getElementsByClassName("incidentPanel");
     }
-    document.getElementById("incidentExtras").style.display = "block";
+    document.getElementById("incidentSafety").style.display = "block";
+    document.getElementById("updatePanel").style.display = "block"; // delete this later and use proper updateUpdatesSection()
 }
 
 function updateUpdatesSection(msgData) {
+    document.getElementById("updatePanel").style.display = "block";
+
     const allUpdates = "";
 
     for (let i = msgData.updates.length - 1; i >= 0; i--) {
