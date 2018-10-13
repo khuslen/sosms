@@ -1,0 +1,23 @@
+h1, h2 {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif
+}
+
+.clientVideoContainer {
+    width: 200px
+}
+
+.clientVideoContainer video {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+}
+
+.peerVideoContainer {
+    width: 200px;
+}
+
+.peerVideoContainer video {
+    width: 100%;
+    height: 200px;
+    object-fit: contain;
+}
