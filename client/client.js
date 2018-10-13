@@ -85,7 +85,7 @@ function connectToWebSocketServer() {
             } else if (msg.res === "getUpdates") {
                 updateUpdatesSection(msg.data);
             } else if (msg.res === "newUpdate") {
-                // TODO: Update updates section with 1 new update
+                updateUpdatesSection(msg.data);
             }
         };
     };
@@ -109,7 +109,7 @@ function updateIncidentPanel(msgData) {
 function updateUpdatesSection(msgData) {
     document.getElementById("updatePanel").style.display = "block";
 
-    const allUpdates = "";
+    let allUpdates = "";
 
     for (let i = msgData.updates.length - 1; i >= 0; i--) {
         allUpdates += "<div class=\"step\">\
