@@ -24,7 +24,7 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log("Yes button clicked");
 
         const msgData = {
-            data: "Y"
+            safe: "Y"
         };
         const reqId = sendCmd("safetyBtn", msgData);
     }
@@ -33,9 +33,30 @@ document.addEventListener("DOMContentLoaded", function() {
         console.log("No button clicked");
 
         const msgData = {
-            data: "N"
+            safe: "N"
         };
         const reqId = sendCmd("safetyBtn", msgData);
+    }
+
+    workBtn = document.getElementById("workBtn");
+    homeBtn = document.getElementById("homeBtn");
+    
+    workBtn.onclick = function() {
+        console.log("Yes, at Work");
+
+        const msgData = {
+            location: "W"
+        };
+        const reqId = sendCmd("locationBtn", msgData);
+    }
+
+    homeBtn.onclick = function() {
+        console.log("No, not at Work");
+
+        const msgData = {
+            saflocatione: "H"
+        };
+        const reqId = sendCmd("locationBtn", msgData);
     }
 }, false);
 
@@ -74,15 +95,6 @@ function updateIncidentPanel(msgData) {
         ";
         
         const panels = document.getElementsByClassName("incidentPanel");
-        // for (let i = 0; i < panels.length; i++) {
-        //     if (msgData.severity === "S1") {
-        //         panels[i].style.backgroundColor = "rgb(250, 215, 215)";
-        //     } else if (msgData.severity === "S2") {
-        //         panels[i].style.backgroundColor = "rgb(250, 235, 215)";
-        //     } else {
-        //         panels[i].style.backgroundColor = "rgb(250, 248, 215)";
-        //     }
-        // }
     }
     document.getElementById("incidentExtras").style.display = "block";
 }
