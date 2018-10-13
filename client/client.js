@@ -78,8 +78,10 @@ function connectToWebSocketServer() {
             const msg = JSON.parse(message.data);
             console.log("Received from server:", msg);
 
-            if (msg.res == "incident") {
+            if (msg.res === "incident") {
                 updateIncidentPanel(msg.data);
+            } else if (msg.res === "updates") {
+                updateUpdatesSection(msg.data);
             }
         };
     };
@@ -97,6 +99,20 @@ function updateIncidentPanel(msgData) {
         const panels = document.getElementsByClassName("incidentPanel");
     }
     document.getElementById("incidentExtras").style.display = "block";
+}
+
+function updateUpdatesSection(msgData) {
+    const allUpdates = "";
+
+    for (let i = msgData.updates.length - 1; i >= 0; i--) {
+        allUpdates += "<div class=\"step\">\
+            <div class=\"title\"><i class=\"info circle icon\"></i> " + msgData.updates[i].time + "</div>\
+            <div class=\"description\">" + msgData.updates[i].text + "</div>\
+            </div>\
+        ";
+    }
+
+    document.getElementById("updates").innerHTML = allUpdates;
 }
 
 function getUserId() {
