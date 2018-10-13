@@ -78,10 +78,14 @@ function connectToWebSocketServer() {
             const msg = JSON.parse(message.data);
             console.log("Received from server:", msg);
 
-            if (msg.res === "incident") {
+            if (msg.res === "login") {
+                sendCmd("getUpdates", {});
+            } else if (msg.res === "incident") {
                 updateIncidentPanel(msg.data);
-            } else if (msg.res === "updates") {
+            } else if (msg.res === "getUpdates") {
                 updateUpdatesSection(msg.data);
+            } else if (msg.res === "newUpdate") {
+                // TODO: Update updates section with 1 new update
             }
         };
     };

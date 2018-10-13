@@ -118,7 +118,7 @@ function reply(ws, res, data) {
 
 function login(ws, msg) {
     if (!msg.data.hasOwnProperty("userId")) {
-        reply(ws, "error", "Please provide user ID!");
+        reply(ws, "login", "Please provide user ID!");
     } else {
         ws.userId = msg.data.userId;
         reply(ws, "login", "Successful login!");
