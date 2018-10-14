@@ -78,11 +78,11 @@ wss.on("connection", function connection(ws) {
             case "locationBtn":
                 locationBtn(ws, msg);
                 break;
-            case "sendSms":
-                sendSms(ws, msg);
-                break;
             case "sendUpdate":
                 sendUpdate(ws, msg);
+                break;
+            case "createIncident":
+                createIncident(ws, msg);
                 break;
             case "getUpdates":
                 getUpdates(ws, msg);
@@ -92,14 +92,7 @@ wss.on("connection", function connection(ws) {
         }
     });
     try {
-        const data = {
-            address: "1 Office Street",
-            name: "Fire on Level 14",
-            desc: "An electrical fire has broken out in the Level 14 Server Room at 7:51am AEST this morning.",
-            severity: "S2",
-            incident: "true"
-        };
-        reply(ws, "incident", data);
+        reply(ws, "connected", {});
     } catch (err) {
         console.log(err);
     }
@@ -109,7 +102,6 @@ function getUpdates(ws, msg) {
     const data = {
         updates: updates
     };
-    console.log(updates);
     reply(ws, "getUpdates", data);
 }
 
@@ -256,6 +248,19 @@ function broadcastMessage(msgBody) {
     }
 }
 
+function createIncident(ws, msg) {
+    const sms = `EMERGENCY: ${msg.data.name}. Please stay safe. See updates here: https://employee-emergency-updates.com`;
+    broadcastMessage(sms);
+
+    const incidentData = {
+        address: msg.data.address,
+        name: msg.data.name,
+        desc: msg.data.desc,
+        severity: msg.data.severity,
+        incident: msg.data.incident
+    };
+    reply(connectedClient, "incident", incidentData);
+    reply(ws, "incident", incidentData);
 }
 
 function sendUpdate(ws, msg) {
