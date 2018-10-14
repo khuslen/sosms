@@ -205,7 +205,7 @@ function sendTelstraSms(smsMsg) {
     try {
         request.post({
             headers: {
-                "Authorization": "Bearer 5bNA84GA8HPHgJUyKFAw513KJKk0",
+                "Authorization": "Bearer UDGsE8EyjqIJAA4ahSYp3KzaxQAW",
                 "Content-Type": "application/json"
             },
             url: "https://tapi.telstra.com/v2/messages/sms",
