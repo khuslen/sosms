@@ -1,14 +1,12 @@
 const mediasoupClient = require("mediasoup-client");
 const uuidGenerator = require("uuid");
 
-let userId;
+const userId = "admin";
 let formData;
 
 document.addEventListener("DOMContentLoaded", function() { 
 
     connectToWebSocketServer();
-   // Getting webpage elements
-    divRoomSelection = document.getElementById("roomSelection");
 
     document.querySelector('form').addEventListener('submit', (e) => {
         formData = new FormData(e.target);
@@ -18,17 +16,13 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("creation").style.display = "none";
         document.getElementById("existing").style.display = "block";
     });
-
 }, false);
 
 let ws;
 function connectToWebSocketServer() {
     ws = new WebSocket("ws://localhost:8000");
     ws.onopen = function() {
-        console.log("Connected!");
-
-        // Sending message to server
-        userId = getUserId();
+        console.log("Connected!");       
 
         const data = {
             userId: userId
@@ -92,17 +86,6 @@ function updateIncidentPanel(msgData) {
         const panels = document.getElementsByClassName("incidentPanel");
     }
     // document.getElementById("incidentSafety").style.display = "block";
-}
-
-function getUserId() {
-    var sPageURL = window.location.search.substring(1);
-    var sURLVariables = sPageURL.split('&');
-    for (var i = 0; i < sURLVariables.length; i++)  {
-        var sParameterName = sURLVariables[i].split('=');
-        if (sParameterName[0] === "userId") {
-            return sParameterName[1];
-        }
-    }
 }
 
 function sendCmd(req, data) {
