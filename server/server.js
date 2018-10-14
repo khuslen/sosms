@@ -205,7 +205,7 @@ function sendTelstraSms(smsMsg) {
     try {
         request.post({
             headers: {
-                "Authorization": "Bearer up3CRWVTZ1Q9yqPgPRm1AfsPgijM",
+                "Authorization": "Bearer 5bNA84GA8HPHgJUyKFAw513KJKk0",
                 "Content-Type": "application/json"
             },
             url: "https://tapi.telstra.com/v2/messages/sms",
@@ -236,7 +236,9 @@ function broadcastMessage(msgBody) {
           to: users[i].mobile,
           body: msgBody
         };
-        sendTwilioSms(smsMsg);
+        if (users[i].employeeId === "87654321") {
+            sendTwilioSms(smsMsg);
+        }
         sendTelstraSms(smsMsg);
     }
 }

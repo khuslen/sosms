@@ -113,27 +113,30 @@ function updateSafetyInstructions(msgData) {
 }
 
 function updateLocationInstructions(msgData) {
-    let htmlString = msgData.info + "\
-    <br>\
-    <br>\
-    <table class=\"ui unstackable very basic table\">\
-        <thead>\
-            <tr><th>Fire Warden</th>\
-            <th>Level</th>\
-        </tr></thead>\
-    ";
+    let htmlString = msgData.info;
 
-    for (let i = 0; i < msgData.fireWardens.length; i++) {
+    if (msgData.hasOwnProperty("fireWardens")) {
         htmlString += "\
-            <tr>\
-                <td>\
-                    " + msgData.fireWardens[i].name + "\
-                </td>\
-                <td>\
-                    " + msgData.fireWardens[i].location + "\
-                </td>\
-            </tr>\
-        ";
+            <br>\
+            <br>\
+            <table class=\"ui unstackable very basic table\">\
+                <thead>\
+                    <tr><th>Fire Warden</th>\
+                    <th>Level</th>\
+                </tr></thead>\
+            ";
+        for (let i = 0; i < msgData.fireWardens.length; i++) {
+            htmlString += "\
+                <tr>\
+                    <td>\
+                        " + msgData.fireWardens[i].name + "\
+                    </td>\
+                    <td>\
+                        " + msgData.fireWardens[i].location + "\
+                    </td>\
+                </tr>\
+            ";
+        }
     }
 
     htmlString += "\
