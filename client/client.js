@@ -41,6 +41,8 @@ document.addEventListener("DOMContentLoaded", function() {
             location: "W"
         };
         const reqId = sendCmd("locationBtn", msgData);
+
+        document.getElementById("safe").style.display = "block";
     }
 
     homeBtn.onclick = function() {
@@ -110,7 +112,34 @@ function updateSafetyInstructions(msgData) {
 }
 
 function updateLocationInstructions(msgData) {
-    document.getElementById("work").innerHTML = msgData.info;
+    let htmlString = msgData.info + "\
+    <br>\
+    <br>\
+    <table class=\"ui unstackable very basic table\">\
+        <thead>\
+            <tr><th>Fire Warden</th>\
+            <th>Level</th>\
+        </tr></thead>\
+    ";
+
+    for (let i = 0; i < msgData.fireWardens.length; i++) {
+        htmlString += "\
+            <tr>\
+                <td>\
+                    " + msgData.fireWardens[i].name + "\
+                </td>\
+                <td>\
+                    " + msgData.fireWardens[i].location + "\
+                </td>\
+            </tr>\
+        ";
+    }
+
+    htmlString += "\
+        </tbody>\
+    </table>";
+
+    document.getElementById("work").innerHTML = htmlString;
 }
 
 function updateUpdatesSection(msgData) {
