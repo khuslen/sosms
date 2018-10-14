@@ -5,6 +5,7 @@ const http = require("http");
 // const fs = require("fs");
 const WebSocketServer = require("ws").Server;
 const moment = require("moment-timezone");
+const request = require("request");
 
 // Twilio
 const accountSid = 'AC38223b55b9e26c080f83b927eb319804';
@@ -188,26 +189,79 @@ function locationBtn(ws, msg) {
     }
 }
 
-function sendSms(ws, msg) {
-    const destination = msg.data.to;
-    const messageBody = msg.data.body;
-    
+function sendTwilioSms(smsMsg) {
+    const destination = smsMsg.to;
+    const messageBody = smsMsg.body;
+    console.log('DESTINATION NUMBER', destination);
     const twilioNumber = '+61427702894';
 
-    twilioClient.messages
-      .create({
-        body: messageBody,
-        from: twilioNumber,
-        to: destination
-      })
-      .then(message => {
-        console.log(message.sid);
-        reply(ws, "sendSms", "Message successfully sent!");
-      })
-      .done();
+    try {
+        twilioClient.messages
+            .create({
+              body: messageBody,
+              from: twilioNumber,
+              to: destination
+            })
+            .then(message => {
+              console.log(message.sid);
+            })
+            .done();
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+function sendTelstraSms(smsMsg) {
+    const destination = smsMsg.to;
+    const messageBody = smsMsg.body;
+
+    // const telstraNumber = '+61472880350';
+    // const telstraNumber = '+61412345678';
+    try {
+        request.post({
+            headers: {
+                "Authorization": "Bearer up3CRWVTZ1Q9yqPgPRm1AfsPgijM",
+                "Content-Type": "application/json"
+            },
+            url: "https://tapi.telstra.com/v2/messages/sms",
+            body: JSON.stringify({
+                to: destination,
+                body: messageBody,
+                validity: 5,
+                scheduledDelivery: 1,
+                notifyURL: "",
+                replyRequest: false,
+                priority: true 
+            })
+        }, function(error, response, body){
+            console.log("Sent", messageBody, "to", destination);
+
+            console.log('ERROR:', error, '\n\n');
+            // console.log('RESPONSE:', response, '\n\n');
+            console.log('BODY:', body, '\n\n');
+        });
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+function broadcastMessage(msgBody) {
+   for (let i = 0; i < users.length; i++) {
+        const smsMsg = {
+          to: users[i].mobile,
+          body: msgBody
+        };
+        // sendTwilioSms(smsMsg);
+        sendTelstraSms(smsMsg);
+    }
+}
+
 }
 
 function sendUpdate(ws, msg) {
+    const sms = `EMERGENCY UPDATE: ${msg.data.update}. More updates here: https://employee-emergency-updates.com`;
+    broadcastMessage(sms);
+    
     const updateInfo = msg.data.update;
     const time = new Date(Date.now());
     const myTimezone = "Australia/Brisbane";
