@@ -1,8 +1,0 @@
-{
-    "port": 3002,
-    "files": ["./**/*.{html,htm,css,js}"],
-    "server": {
-        "baseDir": "./"
-    },
-    "ghostMode": false
-  }
