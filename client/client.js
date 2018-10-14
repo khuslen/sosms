@@ -76,6 +76,7 @@ function connectToWebSocketServer() {
             if (msg.res === "login") {
                 console.log("login msg type");
                 sendCmd("getUpdates", {});
+                sendCmd("getIncident", {});
             } else if (msg.res === "incident") {
                 console.log("incident msg type");
                 updateIncidentPanel(msg.data);

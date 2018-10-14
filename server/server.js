@@ -15,26 +15,14 @@ const twilioClient = require('twilio')(accountSid, authToken);
 
 let users = {};
 
+let incident;
+
+const myTimezone = "Australia/Brisbane";
+const myDatetimeFormat= "h:mmA DD/MM/YYYY";
+
 let connectedClient;
 
-let updates = [
-    {
-        "time": "7:51AM 14/10/2018",
-        "text": "Incident occurred."
-    },
-    {
-        "time": "7:53AM 14/10/2018",
-        "text": "Evacuation commenced."
-    },
-    {
-        "time": "7:53AM 14/10/2018",
-        "text": "Emergency services have been contacted."
-    },
-    {
-        "time": "8:03AM 14/10/2018",
-        "text": "Emergency services have arrived."
-    }
-];
+let updates = [];
 
 MongoClient.connect("mongodb://localhost:27017", { useNewUrlParser: true }, function (err, client) {
     if (err) throw err;
@@ -85,6 +73,9 @@ wss.on("connection", function connection(ws) {
             case "createIncident":
                 createIncident(ws, msg);
                 break;
+            case "getIncident":
+                getIncident(ws, msg);
+                break;
             case "getUpdates":
                 getUpdates(ws, msg);
                 break;
@@ -116,12 +107,13 @@ function reply(ws, res, data) {
 }
 
 function login(ws, msg) {
+    reply(ws, "login", "Successful login!");
     if (msg.data.hasOwnProperty("userId")) {
-        ws.userId = msg.data.userId;
-        reply(ws, "login", "Successful login!");
         if (msg.data.userId !== "admin") {
             connectedClient = ws;
         }
+    } else {
+        connectedClient = ws;
     }
 }
 
@@ -244,30 +236,48 @@ function broadcastMessage(msgBody) {
           to: users[i].mobile,
           body: msgBody
         };
-        // sendTwilioSms(smsMsg);
+        sendTwilioSms(smsMsg);
         sendTelstraSms(smsMsg);
     }
 }
 
 function createIncident(ws, msg) {
+    // Send SMS
     const sms = `EMERGENCY: ${msg.data.name}. Please stay safe. See updates here: https://employee-emergency-updates.com`;
     broadcastMessage(sms);
 
+    // Send email
     const email = {
         subject: "EMERGENCY",
         text: `${msg.data.name}. Please stay safe. See updates here: https://employee-emergency-updates.com`
     };
     sendEmail(email);
+    
+    // Create update
+    const time = new Date(Date.now());
+    const myDatetimeString = moment(time).tz(myTimezone).format(myDatetimeFormat);
 
-    const incidentData = {
+    updates.push({
+        "time": myDatetimeString,
+        "text": "Incident occurred."
+    });
+     const updateMsg = {
+      updates: updates
+    };
+    reply(connectedClient, "newUpdate", updateMsg);
+    reply(ws, "newUpdate", updateMsg);
+
+    // Send incident to admin and client
+    incident = {
         address: msg.data.address,
         name: msg.data.name,
         desc: msg.data.desc,
         severity: msg.data.severity,
         incident: msg.data.incident
     };
-    reply(connectedClient, "incident", incidentData);
-    reply(ws, "incident", incidentData);
+
+    reply(connectedClient, "incident", incident);
+    reply(ws, "incident", incident);
 }
 
 function sendUpdate(ws, msg) {
@@ -282,8 +292,6 @@ function sendUpdate(ws, msg) {
 
     const updateInfo = msg.data.update;
     const time = new Date(Date.now());
-    const myTimezone = "Australia/Brisbane";
-    const myDatetimeFormat= "h:mmA DD/MM/YYYY";
     const myDatetimeString = moment(time).tz(myTimezone).format(myDatetimeFormat);
 
     const newUpdate = {
@@ -333,4 +341,10 @@ function sendEmail(email) {
         console.log('Message sent: %s', info.messageId);
         console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
     });
+}
+
+function getIncident(ws, msg) {
+    if (incident) {
+        reply(ws, "incident", incident);
+    }
 }
