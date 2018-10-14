@@ -6,6 +6,7 @@ const http = require("http");
 const WebSocketServer = require("ws").Server;
 const moment = require("moment-timezone");
 const request = require("request");
+const nodemailer = require("nodemailer");
 
 // Twilio
 const accountSid = 'AC38223b55b9e26c080f83b927eb319804';
@@ -252,6 +253,12 @@ function createIncident(ws, msg) {
     const sms = `EMERGENCY: ${msg.data.name}. Please stay safe. See updates here: https://employee-emergency-updates.com`;
     broadcastMessage(sms);
 
+    const email = {
+        subject: "EMERGENCY",
+        text: `${msg.data.name}. Please stay safe. See updates here: https://employee-emergency-updates.com`
+    };
+    sendEmail(email);
+
     const incidentData = {
         address: msg.data.address,
         name: msg.data.name,
@@ -266,7 +273,13 @@ function createIncident(ws, msg) {
 function sendUpdate(ws, msg) {
     const sms = `EMERGENCY UPDATE: ${msg.data.update}. More updates here: https://employee-emergency-updates.com`;
     broadcastMessage(sms);
-    
+
+    const email = {
+        subject: "EMERGENCY UPDATE",
+        text: `${msg.data.update}. More updates here: https://employee-emergency-updates.com`
+    };
+    sendEmail(email);
+
     const updateInfo = msg.data.update;
     const time = new Date(Date.now());
     const myTimezone = "Australia/Brisbane";
@@ -284,4 +297,40 @@ function sendUpdate(ws, msg) {
     };
     reply(connectedClient, "newUpdate", updateMsg);
     reply(ws, "newUpdate", updateMsg);
+}
+
+// Emailing
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+        user: "tadhackbnedemo@gmail.com",
+        pass: "tadhackbne"
+    }
+});
+
+function sendEmail(email) {
+    let toEmails = "";
+    for (let i = 0; i < users.length; i++) {
+        if (i === users.length - 1) {
+            toEmails += users[i].email;
+        } else {
+            toEmails += users[i].email + ', ';
+        }
+    }
+
+    let mailOptions = {
+        from: "\"Emergency Employee Updates\" <tadhackbnedemo@gmail.com>", // sender address
+        to: toEmails,
+        subject: email.subject,
+        text: email.text,
+        html: `<b>${email.text}</b>`
+    };
+
+    transporter.sendMail(mailOptions, (error, info) => {
+        if (error) {
+            return console.log(error);
+        }
+        console.log('Message sent: %s', info.messageId);
+        console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
+    });
 }
