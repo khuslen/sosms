@@ -8,6 +8,24 @@ document.addEventListener("DOMContentLoaded", function() {
 
     connectToWebSocketServer();
 
+    const sendBtn = document.getElementById("sendBtn");
+
+    sendBtn.onclick = function() {
+        console.log("Send button clicked");
+        const updateInfoElement = document.getElementById("updateInfo");
+        const updateInfo = updateInfoElement.value;
+
+        if (updateInfo === "") {
+            console.log("Update info required!");
+        } else {
+            const msgData = {
+                update: updateInfo
+            };
+            const reqId = sendCmd("sendUpdate", msgData);
+        }
+    }
+
+    // Getting webpage elements
     document.querySelector('form').addEventListener('submit', (e) => {
         formData = new FormData(e.target);
         
