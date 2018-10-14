@@ -1,0 +1,42 @@
+body {
+    font-family: "Lucida Sans Unicode", "Lucida Grande", sans-serif
+}
+
+.headerBar {
+    padding: 15px;
+    background-color: rgb(162, 204, 252);
+    top: 0;
+    position: relative;
+}
+
+.incidentPanel {
+    width: 100%;
+    padding: 5px;
+    padding-top: 15px;
+    padding-bottom: 15px;
+}
+
+#existing {
+    display: none;
+}
+
+@media only screen
+and (min-device-width: 320px) 
+and (max-device-width: 480px) {
+    .pageContent {
+        margin: 10px;
+    }
+}
+
+@media only screen
+and (min-device-width: 500px) {
+    .pageContent {
+        margin: 10px;
+        margin-left: 20%;
+        margin-right: 20%;
+    }
+
+    .headerBar {
+        padding-left: 20%;
+    }
+}
