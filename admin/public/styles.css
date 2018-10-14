@@ -11,16 +11,9 @@ body {
 
 .incidentPanel {
     width: 100%;
-    /* background-color: rgb(236, 236, 236); */
     padding: 5px;
     padding-top: 15px;
     padding-bottom: 15px;
-}
-
-#incidentSafety, #updatePanel {
-    padding: 5px;
-    display: none;
-    text-align: center;
 }
 
 @media only screen

@@ -1,13 +1,6 @@
 const uuidGenerator = require("uuid");
 
 let userId;
-let incident = {
-    name: "Fire on Level 14",
-    address: "1 Office Street",
-    sev: 1,
-    type: "Fire",
-    desc: "some words about the incident"
-};
 
 document.addEventListener("DOMContentLoaded", function() { 
 
@@ -52,29 +45,9 @@ function connectToWebSocketServer() {
 
             if (msg.res === "login") {
                 sendCmd("getUpdates", {});
-            } else if (msg.res === "incident") {
-                updateIncidentPanel(msg.data);
-            } else if (msg.res === "getUpdates") {
-                updateUpdatesSection(msg.data);
-            } else if (msg.res === "newUpdate") {
-                updateUpdatesSection(msg.data);
             }
         };
     };
-}
-
-function updateIncidentPanel(msgData) {
-    document.getElementById("incidentPanelTitle").innerHTML = "Current Incidents at " + msgData.address;
-    if (msgData.incident) {
-        document.getElementById("incidentDesc").innerHTML = "\
-            <h3>" + msgData.name.toUpperCase() + "</h3>\
-            <div class=\"ui clearing divider\"></div>\
-            <p>" + msgData.desc + "</p>\
-        ";
-        
-        const panels = document.getElementsByClassName("incidentPanel");
-    }
-    document.getElementById("updatePanel").style.display = "block"; // delete this later and use proper updateUpdatesSection()
 }
 
 function updateUpdatesSection(msgData) {

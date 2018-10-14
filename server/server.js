@@ -66,6 +66,7 @@ wss.on("connection", function connection(ws) {
         switch (msg.req) {
             case "login":
                 login(ws, msg);
+                getUpdates(ws, msg);
                 break;
             case "getUserInfo":
                 getUserInfo(ws, msg);

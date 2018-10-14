@@ -2,13 +2,6 @@ const mediasoupClient = require("mediasoup-client");
 const uuidGenerator = require("uuid");
 
 let userId;
-let incident = {
-    name: "Fire on Level 14",
-    address: "1 Office Street",
-    sev: 1,
-    type: "Fire",
-    desc: "some words about the incident"
-};
 
 document.addEventListener("DOMContentLoaded", function() { 
 
@@ -79,13 +72,20 @@ function connectToWebSocketServer() {
             console.log("Received from server:", msg);
 
             if (msg.res === "login") {
+                console.log("login msg type");
                 sendCmd("getUpdates", {});
             } else if (msg.res === "incident") {
+                console.log("incident msg type");
                 updateIncidentPanel(msg.data);
-            } else if (msg.res === "getUpdates") {
+            } else if (msg.res === "getUpdates" || msg.res === "newUpdate") {
+                console.log("update msg type");
                 updateUpdatesSection(msg.data);
-            } else if (msg.res === "newUpdate") {
-                updateUpdatesSection(msg.data);
+            } else if (msg.res === "safetyBtn") {
+                console.log("safetyBtn msg type");
+                updateSafetyInstructions(msg.data);
+            } else if (msg.res === "locationBtn") {
+                console.log("locationBtn msg type");
+                updateLocationInstructions(msg.data);
             }
         };
     };
@@ -103,7 +103,14 @@ function updateIncidentPanel(msgData) {
         const panels = document.getElementsByClassName("incidentPanel");
     }
     document.getElementById("incidentSafety").style.display = "block";
-    document.getElementById("updatePanel").style.display = "block"; // delete this later and use proper updateUpdatesSection()
+}
+
+function updateSafetyInstructions(msgData) {
+    document.getElementById("safe").innerHTML = msgData.info;
+}
+
+function updateLocationInstructions(msgData) {
+    document.getElementById("work").innerHTML = msgData.info;
 }
 
 function updateUpdatesSection(msgData) {
