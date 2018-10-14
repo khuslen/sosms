@@ -5,6 +5,7 @@ const http = require("http");
 // const fs = require("fs");
 const WebSocketServer = require("ws").Server;
 const moment = require("moment-timezone");
+const request = require("request");
 
 // Twilio
 const accountSid = 'AC38223b55b9e26c080f83b927eb319804';
@@ -77,11 +78,11 @@ wss.on("connection", function connection(ws) {
             case "locationBtn":
                 locationBtn(ws, msg);
                 break;
-            case "sendSms":
-                sendSms(ws, msg);
-                break;
             case "sendUpdate":
                 sendUpdate(ws, msg);
+                break;
+            case "createIncident":
+                createIncident(ws, msg);
                 break;
             case "getUpdates":
                 getUpdates(ws, msg);
@@ -91,14 +92,7 @@ wss.on("connection", function connection(ws) {
         }
     });
     try {
-        const data = {
-            address: "1 Office Street",
-            name: "Fire on Level 14",
-            desc: "An electrical fire has broken out in the Level 14 Server Room at 7:51am AEST this morning.",
-            severity: "S2",
-            incident: "true"
-        };
-        reply(ws, "incident", data);
+        reply(ws, "connected", {});
     } catch (err) {
         console.log(err);
     }
@@ -108,7 +102,6 @@ function getUpdates(ws, msg) {
     const data = {
         updates: updates
     };
-    console.log(updates);
     reply(ws, "getUpdates", data);
 }
 
@@ -188,26 +181,92 @@ function locationBtn(ws, msg) {
     }
 }
 
-function sendSms(ws, msg) {
-    const destination = msg.data.to;
-    const messageBody = msg.data.body;
-    
+function sendTwilioSms(smsMsg) {
+    const destination = smsMsg.to;
+    const messageBody = smsMsg.body;
+    console.log('DESTINATION NUMBER', destination);
     const twilioNumber = '+61427702894';
 
-    twilioClient.messages
-      .create({
-        body: messageBody,
-        from: twilioNumber,
-        to: destination
-      })
-      .then(message => {
-        console.log(message.sid);
-        reply(ws, "sendSms", "Message successfully sent!");
-      })
-      .done();
+    try {
+        twilioClient.messages
+            .create({
+              body: messageBody,
+              from: twilioNumber,
+              to: destination
+            })
+            .then(message => {
+              console.log(message.sid);
+            })
+            .done();
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+function sendTelstraSms(smsMsg) {
+    const destination = smsMsg.to;
+    const messageBody = smsMsg.body;
+
+    // const telstraNumber = '+61472880350';
+    // const telstraNumber = '+61412345678';
+    try {
+        request.post({
+            headers: {
+                "Authorization": "Bearer up3CRWVTZ1Q9yqPgPRm1AfsPgijM",
+                "Content-Type": "application/json"
+            },
+            url: "https://tapi.telstra.com/v2/messages/sms",
+            body: JSON.stringify({
+                to: destination,
+                body: messageBody,
+                validity: 5,
+                scheduledDelivery: 1,
+                notifyURL: "",
+                replyRequest: false,
+                priority: true 
+            })
+        }, function(error, response, body){
+            console.log("Sent", messageBody, "to", destination);
+
+            console.log('ERROR:', error, '\n\n');
+            // console.log('RESPONSE:', response, '\n\n');
+            console.log('BODY:', body, '\n\n');
+        });
+    } catch (err) {
+        console.log(err);
+    }
+}
+
+function broadcastMessage(msgBody) {
+   for (let i = 0; i < users.length; i++) {
+        const smsMsg = {
+          to: users[i].mobile,
+          body: msgBody
+        };
+        // sendTwilioSms(smsMsg);
+        sendTelstraSms(smsMsg);
+    }
+}
+
+function createIncident(ws, msg) {
+    const sms = `EMERGENCY: ${msg.data.name}. Please stay safe. See updates here: https://employee-emergency-updates.com`;
+    broadcastMessage(sms);
+
+    const incidentData = {
+        address: msg.data.address,
+        name: msg.data.name,
+        desc: msg.data.desc,
+        severity: msg.data.severity,
+        incident: msg.data.incident
+    };
+    reply(connectedClient, "incident", incidentData);
+    reply(ws, "incident", incidentData);
 }
 
 function sendUpdate(ws, msg) {
+    const sms = `EMERGENCY UPDATE: ${msg.data.update}. More updates here: https://employee-emergency-updates.com`;
+    broadcastMessage(sms);
+    
     const updateInfo = msg.data.update;
     const time = new Date(Date.now());
     const myTimezone = "Australia/Brisbane";
